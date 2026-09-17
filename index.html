@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Password 💕</title>
+<style>
+  :root{
+    --pink-1:#ffe3ec;
+    --pink-2:#ffb3c9;
+    --pink-3:#ff8fab;
+    --pink-4:#ff5c8d;
+    --pink-deep:#d6336c;
+    --weak:#ff5c7a;
+    --medium:#ffa8c6;
+    --strong:#ff2e63;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;font-family:'Segoe UI', system-ui, sans-serif;}
+
+  /* ================= SCREEN 1: CREATE PASSWORD ================= */
+  #passwordScreen{
+    min-height:100vh;
+    background:linear-gradient(160deg,var(--pink-1),var(--pink-2) 60%,var(--pink-3));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    transition:opacity .6s ease;
+  }
+  .card{
+    background:rgba(255,255,255,0.9);
+    backdrop-filter:blur(6px);
+    border-radius:24px;
+    padding:36px 28px;
+    width:100%;
+    max-width:380px;
+    text-align:center;
+    box-shadow:0 20px 40px rgba(214,51,108,0.25);
+    border:2px solid var(--pink-2);
+  }
+  .heart-top{font-size:34px;margin-bottom:6px;}
+  h1{margin:0 0 6px;color:var(--pink-deep);font-size:22px;}
+  .sub{margin:0 0 24px;color:#c9527a;font-size:13px;}
+  .input-box{position:relative;text-align:left;}
+  input{
+    width:100%;
+    padding:14px 46px 14px 16px;
+    border-radius:14px;
+    border:2px solid var(--pink-3);
+    outline:none;
+    font-size:16px;
+    color:var(--pink-deep);
+    background:#fff5f8;
+    transition:.2s;
+  }
+  input:focus{border-color:var(--pink-deep);box-shadow:0 0 0 4px rgba(255,143,171,0.3);}
+  input::placeholder{color:#e39ab5;}
+  .eye{
+    position:absolute;right:14px;top:50%;transform:translateY(-50%);
+    cursor:pointer;font-size:18px;user-select:none;color:var(--pink-deep);
+  }
+  .bar-track{margin-top:16px;width:100%;height:8px;border-radius:6px;background:#ffe0ea;overflow:hidden;}
+  .bar-fill{height:100%;width:0%;border-radius:6px;background:var(--weak);transition:width .3s ease, background .3s ease;}
+  .message{margin-top:10px;font-size:13px;color:#c9527a;text-align:left;min-height:16px;}
+  .hearts-row{margin-top:20px;font-size:18px;letter-spacing:4px;opacity:.8;}
+
+  .continueBtn{
+    margin-top:22px;
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg,var(--pink-4),var(--pink-deep));
+    color:#fff;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    opacity:.4;
+    pointer-events:none;
+    transition:opacity .3s ease, transform .15s ease;
+  }
+  .continueBtn.active{opacity:1;pointer-events:auto;}
+  .continueBtn:active{transform:scale(0.97);}
+
+  /* ================= SCREEN 2: GALAXY LOVE ================= */
+  #galaxyScreen{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:#05010a;
+    overflow:hidden;
+  }
+  #galaxyScreen.show{display:block;}
+
+  #starCanvas, #heartCanvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+  }
+
+  .glow-title{
+    position:absolute;
+    top:6%;
+    left:50%;
+    transform:translateX(-50%);
+    color:#ff8fab;
+    font-size:22px;
+    font-weight:700;
+    text-shadow:0 0 12px #ff5c8d, 0 0 24px #ff2e63;
+    text-align:center;
+    width:90%;
+    z-index:3;
+    animation:glowPulse 2.4s ease-in-out infinite;
+  }
+  @keyframes glowPulse{
+    0%,100%{text-shadow:0 0 10px #ff5c8d, 0 0 20px #ff2e63;}
+    50%{text-shadow:0 0 20px #ff8fab, 0 0 40px #ff2e63;}
+  }
+
+  .floating-msg{
+    position:absolute;
+    color:#ffd6e3;
+    font-size:12px;
+    opacity:0;
+    white-space:nowrap;
+    text-shadow:0 0 6px rgba(255,140,171,0.8);
+    z-index:3;
+    animation:floatMsg 6s ease-in-out forwards;
+  }
+  @keyframes floatMsg{
+    0%{opacity:0; transform:translateY(10px);}
+    15%{opacity:1; transform:translateY(0);}
+    85%{opacity:1;}
+    100%{opacity:0; transform:translateY(-10px);}
+  }
+
+  .restart{
+    position:absolute;
+    bottom:5%;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:4;
+    background:rgba(255,255,255,0.1);
+    border:1px solid #ff8fab;
+    color:#ffd6e3;
+    padding:8px 18px;
+    border-radius:20px;
+    font-size:12px;
+    cursor:pointer;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ SCREEN 1 ============ -->
+<div id="passwordScreen">
+  <div class="card">
+    <div class="heart-top">💗</div>
+    <h1>Buat Kata Sandi</h1>
+    <p class="sub">Lindungi hatimu dengan kata sandi yang kuat ✨</p>
+
+    <div class="input-box">
+      <input type="password" id="password" placeholder="Masukkan kata sandi">
+      <span class="eye" id="eye">👁️</span>
+    </div>
+
+    <div class="bar-track">
+      <div class="bar-fill" id="bar"></div>
+    </div>
+
+    <div class="message" id="message">Mulai mengetik...</div>
+
+    <div class="hearts-row">💕 💗 💖 💞 💓</div>
+
+    <button class="continueBtn" id="continueBtn">Lanjut ke Kejutan 💌</button>
+  </div>
+</div>
+
+<!-- ============ SCREEN 2 ============ -->
+<div id="galaxyScreen">
+  <canvas id="starCanvas"></canvas>
+  <canvas id="heartCanvas"></canvas>
+  <div class="glow-title">Selamat, Kata Sandimu Aman 💖<br>Ini Hadiah Kecil Untukmu</div>
+  <button class="restart" id="restartBtn">↺ Ulangi</button>
+</div>
+
+<script>
+/* ================= SCREEN 1 LOGIC ================= */
+const password = document.getElementById("password");
+const bar = document.getElementById("bar");
+const message = document.getElementById("message");
+const eye = document.getElementById("eye");
+const continueBtn = document.getElementById("continueBtn");
+
+let currentScore = 0;
+
+function checkStrength(value){
+  let score = 0;
+  if(value.length >= 6) score++;
+  if(value.length >= 10) score++;
+  if(/[A-Z]/.test(value)) score++;
+  if(/[0-9]/.test(value)) score++;
+  if(/[^A-Za-z0-9]/.test(value)) score++;
+  return score;
+}
+
+password.addEventListener("input", () => {
+  const value = password.value;
+  if(value.length === 0){
+    bar.style.width = "0%";
+    bar.style.background = "var(--weak)";
+    message.textContent = "Mulai mengetik...";
+    currentScore = 0;
+    continueBtn.classList.remove("active");
+    return;
+  }
+  currentScore = checkStrength(value);
+  if(currentScore <= 2){
+    bar.style.width = "33%";
+    bar.style.background = "var(--weak)";
+    message.textContent = "Lemah — tambahkan huruf besar & angka 💔";
+  } else if(currentScore <= 4){
+    bar.style.width = "66%";
+    bar.style.background = "var(--medium)";
+    message.textContent = "Cukup baik — sedikit lagi jadi sempurna 💗";
+  } else {
+    bar.style.width = "100%";
+    bar.style.background = "var(--strong)";
+    message.textContent = "Kuat sekali! Kata sandi ini solid 💖";
+  }
+  // tombol aktif begitu password cukup baik (score >= 3)
+  if(currentScore >= 3){
+    continueBtn.classList.add("active");
+  } else {
+    continueBtn.classList.remove("active");
+  }
+});
+
+eye.addEventListener("click", () => {
+  if(password.type === "password"){
+    password.type = "text";
+    eye.textContent = "🙈";
+  } else {
+    password.type = "password";
+    eye.textContent = "👁️";
+  }
+});
+
+continueBtn.addEventListener("click", () => {
+  document.getElementById("passwordScreen").style.opacity = "0";
+  setTimeout(() => {
+    document.getElementById("passwordScreen").style.display = "none";
+    const galaxy = document.getElementById("galaxyScreen");
+    galaxy.classList.add("show");
+    initGalaxy();
+  }, 500);
+});
+
+document.getElementById("restartBtn").addEventListener("click", () => {
+  location.reload();
+});
+
+/* ================= SCREEN 2 LOGIC: STARFIELD + HEART ================= */
+let galaxyInitialized = false;
+
+function initGalaxy(){
+  if(galaxyInitialized) return;
+  galaxyInitialized = true;
+
+  const starCanvas = document.getElementById("starCanvas");
+  const heartCanvas = document.getElementById("heartCanvas");
+  const sctx = starCanvas.getContext("2d");
+  const hctx = heartCanvas.getContext("2d");
+
+  function resize(){
+    starCanvas.width = window.innerWidth;
+    starCanvas.height = window.innerHeight;
+    heartCanvas.width = window.innerWidth;
+    heartCanvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  /* ---- starfield ---- */
+  const stars = [];
+  for(let i=0;i<220;i++){
+    stars.push({
+      x: Math.random()*starCanvas.width,
+      y: Math.random()*starCanvas.height,
+      r: Math.random()*1.4 + 0.3,
+      speed: Math.random()*0.3 + 0.05,
+      alpha: Math.random()
+    });
+  }
+
+  function drawStars(){
+    sctx.fillStyle = "#05010a";
+    sctx.fillRect(0,0,starCanvas.width,starCanvas.height);
+    for(const s of stars){
+      s.alpha += (Math.random()-0.5)*0.05;
+      s.alpha = Math.max(0.1, Math.min(1, s.alpha));
+      sctx.beginPath();
+      sctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      sctx.fillStyle = `rgba(255,214,227,${s.alpha})`;
+      sctx.fill();
+      s.y += s.speed;
+      if(s.y > starCanvas.height){ s.y = 0; s.x = Math.random()*starCanvas.width; }
+    }
+    requestAnimationFrame(drawStars);
+  }
+  drawStars();
+
+  /* ---- heart particle animation ---- */
+  function heartPoint(t, scale){
+    const x = 16*Math.pow(Math.sin(t),3);
+    const y = 13*Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t);
+    return { x: x*scale, y: -y*scale };
+  }
+
+  const particles = [];
+  const cx = heartCanvas.width/2;
+  const cy = heartCanvas.height*0.42;
+  const scale = Math.min(heartCanvas.width, heartCanvas.height) / 28;
+
+  for(let i=0;i<650;i++){
+    const t = Math.random()*Math.PI*2;
+    const jitter = 0.35 + Math.random()*0.35;
+    const p = heartPoint(t, scale*jitter);
+    particles.push({
+      tx: cx + p.x,
+      ty: cy + p.y,
+      x: cx + (Math.random()-0.5)*heartCanvas.width,
+      y: heartCanvas.height + Math.random()*200,
+      size: Math.random()*2.2 + 1,
+      speed: 0.02 + Math.random()*0.03
+    });
+  }
+
+  function drawHeart(){
+    hctx.clearRect(0,0,heartCanvas.width,heartCanvas.height);
+    hctx.globalCompositeOperation = "lighter";
+    for(const p of particles){
+      p.x += (p.tx - p.x) * p.speed;
+      p.y += (p.ty - p.y) * p.speed;
+      const grad = hctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size*4);
+      grad.addColorStop(0, "rgba(255,140,171,0.9)");
+      grad.addColorStop(1, "rgba(255,92,141,0)");
+      hctx.fillStyle = grad;
+      hctx.beginPath();
+      hctx.arc(p.x, p.y, p.size*4, 0, Math.PI*2);
+      hctx.fill();
+
+      hctx.fillStyle = "#fff0f5";
+      hctx.beginPath();
+      hctx.arc(p.x, p.y, p.size*0.6, 0, Math.PI*2);
+      hctx.fill();
+    }
+    hctx.globalCompositeOperation = "source-over";
+    requestAnimationFrame(drawHeart);
+  }
+  drawHeart();
+
+  /* ---- floating romantic messages ---- */
+  const messages = [
+    "Kamu bintang favoritku ⭐",
+    "Ojo jonggun terus su 💗",
+    "Semesta kecil milik kita 🌌",
+    "Terima kasih sudah ada 💞",
+    "Bersinar lebih terang bersamamu ✨",
+    "Cinta yang tak lekang waktu 💖",
+    "Kamu alasan aku tersenyum 🌸",
+    "Selamanya untukmu 💓",
+    "jangan jonggyn terus su"
+  ];
+
+  function spawnMessage(){
+    const el = document.createElement("div");
+    el.className = "floating-msg";
+    el.textContent = messages[Math.floor(Math.random()*messages.length)];
+    el.style.left = (10 + Math.random()*70) + "%";
+    el.style.top = (55 + Math.random()*35) + "%";
+    document.getElementById("galaxyScreen").appendChild(el);
+    setTimeout(() => el.remove(), 6200);
+  }
+  setInterval(spawnMessage, 1300);
+  spawnMessage();
+}
+</script>
+
+</body>
+</html>
